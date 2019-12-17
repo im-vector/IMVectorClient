@@ -54,21 +54,21 @@ public class LoginHandler extends SimpleChannelInboundHandler<IIMPacket> {
     protected void channelRead0(ChannelHandlerContext ctx, IIMPacket msg) throws Exception {
         logger.info("收到一条消息: {}", msg.getLogicServiceId());
 
-        var handler = SpringUtils.getBean("MapService" + msg.getLogicServiceId(), MapInboundHandler.class);
+        MapInboundHandler handler = SpringUtils.getBean("MapService" + msg.getLogicServiceId(), MapInboundHandler.class);
         if (handler == null) {
             // 如果没有处理器，那么直接关闭
             logger.error("不存在映射层处理服务：{}", msg.getLogicServiceId());
             ctx.close();
             return;
         }
-        var userDetail = handler.packetRead(ctx, msg);
+        Object userDetail = handler.packetRead(ctx, msg);
         if (userDetail != null) {
-            var logicHandlers = logicHandler.getLogicHandler(userDetail, ctx.channel());
+            ChannelHandler[] logicHandlers = logicHandler.getLogicHandler(userDetail, ctx.channel());
 
             //登录成功，这个处理器就会替换为业务处理处理器
             //先移除不需要的处理器
             ctx.pipeline().remove(this);
-            var idleHandler = ctx.pipeline().get(IdleStateHandler.class);
+            ChannelHandler idleHandler = ctx.pipeline().get(IdleStateHandler.class);
             if (idleHandler != null) {
                 for (ChannelHandler channelHandler : logicHandlers) {
                     if (channelHandler instanceof IdleStateHandler) {

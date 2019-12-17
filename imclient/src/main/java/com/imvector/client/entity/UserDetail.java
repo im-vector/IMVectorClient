@@ -1,7 +1,5 @@
 package com.imvector.client.entity;
 
-import org.springframework.stereotype.Repository;
-
 import java.util.Objects;
 
 /**

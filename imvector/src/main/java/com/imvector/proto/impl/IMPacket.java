@@ -48,7 +48,7 @@ public class IMPacket implements IIMPacket<Short> {
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
 
-        var msg = new IMPacket();
+        IMPacket msg = new IMPacket();
 
         readInt(inputStream);
         msg.setVersion(readInt(inputStream));
@@ -105,7 +105,7 @@ public class IMPacket implements IIMPacket<Short> {
         writeInt(seq, stream);
         writeInt(body.length, stream);
 
-        stream.writeBytes(body);
+        stream.write(body,0,body.length);
 
         return stream.toByteArray();
     }

@@ -17,7 +17,7 @@ public class IMLogicHandler<T> implements IIMLogicHandler<T> {
     public ChannelHandler[] getLogicHandler(T userDetail, Channel channel) {
 
         //登录成功，这个处理器就会替换为业务处理处理器
-        var imServerHandler = new IMServiceHandler<>(userDetail, channel);
+        IMServiceHandler imServerHandler = new IMServiceHandler<>(userDetail, channel);
         return new ChannelHandler[]{
                 new IdleStateHandler(5 * 60, 0, 0, TimeUnit.SECONDS),
                 imServerHandler,

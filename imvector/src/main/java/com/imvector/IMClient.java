@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.lang.NonNull;
@@ -44,7 +45,7 @@ public class IMClient implements ApplicationListener<ApplicationEvent> {
     @Override
     public void onApplicationEvent(@NonNull ApplicationEvent event) {
         if (event instanceof ApplicationStartedEvent) {
-            var context = ((ApplicationStartedEvent) event).getApplicationContext();
+            ConfigurableApplicationContext context = ((ApplicationStartedEvent) event).getApplicationContext();
             if (context instanceof AnnotationConfigApplicationContext) {
                 //不需要Servlet 也启动完成
                 try {
@@ -93,7 +94,7 @@ public class IMClient implements ApplicationListener<ApplicationEvent> {
         /*
          * 客户端中，把ServerBootstrap 改为Bootstrap
          */
-        var b = new Bootstrap();
+        Bootstrap b = new Bootstrap();
         //加入事件循环器
         b.group(workerGroup);
         /*
@@ -129,7 +130,7 @@ public class IMClient implements ApplicationListener<ApplicationEvent> {
 
         //绑定端口，开始接收进来的连接
         //sync 等待绑定成功
-        var f = b.connect(nettyConfig.getHost(), nettyConfig.getPort());
+        ChannelFuture f = b.connect(nettyConfig.getHost(), nettyConfig.getPort());
         f.addListener(future -> {
             if (future.isSuccess()) {
                 logger.info("IMClient 启动成功");
