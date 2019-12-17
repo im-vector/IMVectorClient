@@ -1,4 +1,5 @@
 rootProject.name = 'IMVectorClient'
 include 'imvector'
 include 'imclient'
+include 'imrepository'
 

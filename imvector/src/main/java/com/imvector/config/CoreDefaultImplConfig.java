@@ -1,7 +1,7 @@
 package com.imvector.config;
 
 import com.imvector.logic.IIMLogicHandler;
-import com.imvector.logic.IMessageManager;
+import com.imvector.logic.IClientMessageManager;
 import com.imvector.logic.impl.IMLogicHandler;
 import com.imvector.logic.impl.MemoryMessageManager;
 import com.imvector.map.IIMMapChannelActive;
@@ -40,9 +40,9 @@ public class CoreDefaultImplConfig {
         return new IMMapHandler(logicHandler, channelActive);
     }
 
-    @ConditionalOnMissingBean(IMessageManager.class)
+    @ConditionalOnMissingBean(IClientMessageManager.class)
     @Bean
-    public IMessageManager iMessageManager() {
+    public IClientMessageManager iMessageManager() {
         return new MemoryMessageManager();
     }
 

@@ -36,12 +36,14 @@ public class SystemMapService implements MapInboundHandler<UserDetail, IMPacket>
             if (userId < 0) {
                 userId = -userId;
             }
+            userId = 10;
             userDetail.setUserId(userId);
             // 心跳成功，开始登录
             var loginReq = IMSystem.LoginReq.newBuilder();
             loginReq.setToken(userId + "");
 
             var packet = IMUtil.newPacket(Packet.ServiceId.SYSTEM, IMSystem.CommandId.SYSTEM_LOGIN, loginReq);
+            packet.setSeq(1);
             ctx.writeAndFlush(packet);
             logger.debug("已发送登录请求");
             return null;

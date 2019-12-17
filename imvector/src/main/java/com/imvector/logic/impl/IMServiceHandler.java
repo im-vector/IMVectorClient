@@ -1,6 +1,6 @@
 package com.imvector.logic.impl;
 
-import com.imvector.logic.IMessageManager;
+import com.imvector.logic.IClientMessageManager;
 import com.imvector.logic.PacketInboundHandler;
 import com.imvector.proto.IIMPacket;
 import com.imvector.utils.SpringUtils;
@@ -28,8 +28,8 @@ public class IMServiceHandler<T> extends SimpleChannelInboundHandler<IIMPacket> 
     public IMServiceHandler(T userDetail, Channel channel) {
         this.userDetail = userDetail;
 
-        SpringUtils.getBean(IMessageManager.class)
-                .addChannel(userDetail, channel);
+        SpringUtils.getBean(IClientMessageManager.class)
+                .setChannel(userDetail, channel);
         userEventTriggered = SpringUtils.getBean(IMLogicUserEventTriggered.class);
     }
 
@@ -58,8 +58,7 @@ public class IMServiceHandler<T> extends SimpleChannelInboundHandler<IIMPacket> 
         //这个方法不会抛出异常，如果订阅失败（例如，超时了，也不会出现错误，只是打印了个警告信息）
         //这里倒无所谓，因为只是远程无法断开，实际也是断开了
 
-        SpringUtils.getBean(IMessageManager.class)
-                .removeChannel(userDetail);
+        SpringUtils.getBean(IClientMessageManager.class).clear();
     }
 
     @Override

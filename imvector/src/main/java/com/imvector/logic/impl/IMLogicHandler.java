@@ -4,9 +4,6 @@ import com.imvector.logic.IIMLogicHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.timeout.IdleStateHandler;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,7 +19,7 @@ public class IMLogicHandler<T> implements IIMLogicHandler<T> {
         //登录成功，这个处理器就会替换为业务处理处理器
         var imServerHandler = new IMServiceHandler<>(userDetail, channel);
         return new ChannelHandler[]{
-                new IdleStateHandler(5, 0, 0, TimeUnit.SECONDS),
+                new IdleStateHandler(5 * 60, 0, 0, TimeUnit.SECONDS),
                 imServerHandler,
         };
     }

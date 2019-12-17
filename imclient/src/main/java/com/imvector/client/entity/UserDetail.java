@@ -1,5 +1,9 @@
 package com.imvector.client.entity;
 
+import org.springframework.stereotype.Repository;
+
+import java.util.Objects;
+
 /**
  * @author: vector.huang
  * @date: 2019/10/02 01:57
@@ -56,5 +60,18 @@ public class UserDetail {
 
     public void setStart(long start) {
         this.start = start;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserDetail)) return false;
+        UserDetail that = (UserDetail) o;
+        return getUserId() == that.getUserId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUserId());
     }
 }
