@@ -1,7 +1,7 @@
 package com.imvector.config;
 
-import com.imvector.logic.IIMLogicHandler;
 import com.imvector.logic.IClientMessageManager;
+import com.imvector.logic.IIMLogicHandler;
 import com.imvector.logic.impl.IMLogicHandler;
 import com.imvector.logic.impl.MemoryMessageManager;
 import com.imvector.map.IIMMapChannelActive;
@@ -9,6 +9,7 @@ import com.imvector.map.IIMMapHandler;
 import com.imvector.map.impl.IMMapHandler;
 import com.imvector.proto.IIMProtocolCodec;
 import com.imvector.proto.impl.IMProtocolCodec;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CoreDefaultImplConfig {
 
+    @Value("${imvector.noon-time:300}")
+    private int noonTime;
+
     @ConditionalOnMissingBean(IIMProtocolCodec.class)
     @Bean("defaultIMProtocolCodec")
     public IIMProtocolCodec defaultIMProtocolCodec() {
@@ -29,7 +33,7 @@ public class CoreDefaultImplConfig {
     @ConditionalOnMissingBean(IIMLogicHandler.class)
     @Bean
     public IIMLogicHandler iIMLogicHandler() {
-        return new IMLogicHandler();
+        return new IMLogicHandler(noonTime);
     }
 
     @ConditionalOnMissingBean(IIMMapHandler.class)

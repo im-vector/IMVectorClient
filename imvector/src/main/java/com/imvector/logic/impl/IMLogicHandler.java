@@ -13,13 +13,22 @@ import java.util.concurrent.TimeUnit;
  */
 public class IMLogicHandler<T> implements IIMLogicHandler<T> {
 
+    private int noonTime = 5 * 60;
+
+    public IMLogicHandler() {
+    }
+
+    public IMLogicHandler(int noonTime) {
+        this.noonTime = noonTime;
+    }
+
     @Override
     public ChannelHandler[] getLogicHandler(T userDetail, Channel channel) {
 
         //登录成功，这个处理器就会替换为业务处理处理器
         IMServiceHandler imServerHandler = new IMServiceHandler<>(userDetail, channel);
         return new ChannelHandler[]{
-                new IdleStateHandler(5 * 60, 0, 0, TimeUnit.SECONDS),
+                new IdleStateHandler(noonTime, 0, 0, TimeUnit.SECONDS),
                 imServerHandler,
         };
     }

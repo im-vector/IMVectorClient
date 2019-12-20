@@ -4,6 +4,7 @@ import com.imvector.proto.IIMPacket;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
 /**
  * 默认协议参考了mars
@@ -56,7 +57,9 @@ public class IMPacket implements IIMPacket<Short> {
         msg.setCommandId(readShort(inputStream));
         msg.setSeq(readInt(inputStream));
         readInt(inputStream);
-        msg.setBody(inputStream.readAllBytes());
+
+        byte[] result = Arrays.copyOfRange(bytes, IMPacket.HEAD_LENGTH - 1, bytes.length);
+        msg.setBody(result);
 
         return msg;
     }

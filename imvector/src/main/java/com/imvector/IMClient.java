@@ -36,10 +36,13 @@ public class IMClient implements ApplicationListener<ApplicationEvent> {
     private ChannelFuture channelFuture;
     private EventLoopGroup workerGroup;
 
+    private IMClientStatus status;
+
     @Autowired
     public IMClient(NettyConfig nettyConfig, InitChannel initChannel) {
         this.nettyConfig = nettyConfig;
         this.initChannel = initChannel;
+        status = IMClientStatus.CONNECT_FAIL;
     }
 
     @Override
@@ -47,19 +50,13 @@ public class IMClient implements ApplicationListener<ApplicationEvent> {
         if (event instanceof ApplicationStartedEvent) {
             ConfigurableApplicationContext context = ((ApplicationStartedEvent) event).getApplicationContext();
             if (context instanceof AnnotationConfigApplicationContext) {
-                //不需要Servlet 也启动完成
-                try {
-                    //不可以阻塞，否则SpringBoot 就无法启动了
-                    run();
-                } catch (Exception e) {
-                    shutdownGracefully();
-                    logger.error(e.getMessage(), e);
-                }
+                start();
             }
         } else if (event instanceof ContextClosedEvent) {
             //SpringBoot 关闭的同时，关闭Netty
-            channelFuture.channel().close();
-            shutdownGracefully();
+            if (channelFuture.channel().isOpen()) {
+                channelFuture.channel().close();
+            }
         }
     }
 
@@ -70,6 +67,19 @@ public class IMClient implements ApplicationListener<ApplicationEvent> {
         if (workerGroup != null) {
             workerGroup.shutdownGracefully();
             workerGroup = null;
+        }
+    }
+
+    public void start() {
+        if (status != IMClientStatus.CONNECT_FAIL) {
+            return;
+        }
+        try {
+            //不可以阻塞，否则SpringBoot 就无法启动了
+            run();
+        } catch (Exception e) {
+            shutdownGracefully();
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -134,9 +144,11 @@ public class IMClient implements ApplicationListener<ApplicationEvent> {
         f.addListener(future -> {
             if (future.isSuccess()) {
                 logger.info("IMClient 启动成功");
+                setStatus(IMClientStatus.CONNECTED);
             } else {
                 //例如，端口被占用了:Address already in use
                 logger.info("IMServer 启动失败：" + future.cause().getMessage());
+                setStatus(IMClientStatus.CONNECT_FAIL);
             }
         });
         /*
@@ -145,11 +157,21 @@ public class IMClient implements ApplicationListener<ApplicationEvent> {
          */
         channelFuture = f.channel().closeFuture();
         channelFuture.addListener(future -> {
+            shutdownGracefully();
             if (future.isSuccess()) {
                 logger.info("成功关闭IMClent");
             } else {
                 logger.info("关闭IMClent 失败：" + future.cause().getMessage());
             }
+            setStatus(IMClientStatus.CONNECT_FAIL);
         });
+    }
+
+    public IMClientStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(IMClientStatus status) {
+        this.status = status;
     }
 }
