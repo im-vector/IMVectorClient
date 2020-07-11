@@ -6,7 +6,6 @@ import com.imvector.map.MapInboundHandler;
 import com.imvector.proto.impl.IMPacket;
 import com.imvector.server.proto.Packet;
 import com.imvector.server.proto.system.IMSystem;
-import com.imvector.server.proto.user.IMUser;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,7 @@ public class SystemMapService implements MapInboundHandler<UserDetail, IMPacket>
             if (userId < 0) {
                 userId = -userId;
             }
-            userId = 10;
+//            userId = 10;
             userDetail.setUserId(userId);
             // 心跳成功，开始登录
             var loginReq = IMSystem.LoginReq.newBuilder();

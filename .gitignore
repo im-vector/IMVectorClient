@@ -11,3 +11,5 @@
 /build
 /log
 /lib
+/docker
+/logs

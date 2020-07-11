@@ -1,4 +1,6 @@
 plugins {
+    id 'org.springframework.boot' version '2.2.8.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'java'
 }
 
@@ -8,9 +10,90 @@ sourceCompatibility = 11
 
 repositories {
     maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+    mavenLocal()
     mavenCentral()
     maven { url "https://repo.spring.io/milestone" }
 }
+
+ext {
+    set('imvector', 'imvector-1.0.0.jar')
+    set('improto', 'improto-1.0.0.jar')
+    set('imrepository', 'imrepository-1.0.0.jar')
+}
+
+task copyJars(type: Copy) {
+    doFirst {
+        def dir = new File("${rootDir}/docker")
+        if (dir.exists()) {
+            dir.deleteDir()
+        }
+    }
+    from configurations.runtimeClasspath
+    // 目标位置
+    into 'docker/lib'
+}
+
+task mvCommonJar() {
+    def dir = new File("${rootDir}/docker/common");
+    if (!dir.exists()) {
+        dir.mkdirs();
+    }
+    def imvectorJar = new File("${rootDir}/docker/lib/${imvector}")
+    if (imvectorJar.exists()) {
+        imvectorJar.renameTo(new File("${rootDir}/docker/common/${imvector}"))
+    }
+    def improtoJar = new File("${rootDir}/docker/lib/${improto}")
+    if (improtoJar.exists()) {
+        improtoJar.renameTo(new File("${rootDir}/docker/common/${improto}"))
+    }
+    def imrepositoryJar = new File("${rootDir}/docker/lib/${imrepository}")
+    if (imrepositoryJar.exists()) {
+        imrepositoryJar.renameTo(new File("${rootDir}/docker/common/${imrepository}"))
+    }
+}
+
+
+clean {
+    doLast {
+        def dir = new File("${rootDir}/docker")
+        if (dir.exists()) {
+            dir.deleteDir()
+        }
+    }
+}
+
+bootJar {
+    print("============= 开始编译 ===========")
+    def dir = new File("${rootDir}/docker/lib")
+    if (!dir.exists()) {
+        dir.mkdirs()
+    }
+    def cp = ''
+    dir.eachFile { name ->
+        cp += " lib/${name.name}"
+    }
+
+    cp += " lib/${imvector}"
+    cp += " lib/${improto}"
+    cp = cp.trim()
+
+
+    manifest {
+        attributes 'Class-Path': cp
+    }
+    // 不打包全部的jar 文件
+    excludes = ["*.jar"]
+    doLast {
+        def appName = "${rootProject.name}-${archiveVersion.get()}.jar"
+        copy {
+            from "build/libs/${appName}"
+            into "docker"
+            rename("$appName", "app.jar")
+        }
+        print("============= 编译成功 ===========")
+    }
+}
+
 
 dependencies {
 
@@ -19,7 +102,7 @@ dependencies {
     //IM 通信使用ProtoBuf
     implementation 'com.google.protobuf:protobuf-java:3.7.1'
 
-    implementation 'io.netty:netty-all:4.1.33.Final'
-    implementation 'org.springframework.boot:spring-boot-starter:2.1.3.RELEASE'
-    testImplementation('org.springframework.boot:spring-boot-starter-test:2.1.3.RELEASE')
+    implementation 'io.netty:netty-all:4.1.50.Final'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
