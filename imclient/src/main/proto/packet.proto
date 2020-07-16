@@ -5,7 +5,7 @@ package base;
 
 import "google/protobuf/any.proto";
 
-option java_package = "com.imvector.server.proto";
+option java_package = "com.imvector.proto";
 option java_outer_classname = "Packet";
 
 enum ServiceId {
@@ -15,6 +15,8 @@ enum ServiceId {
     USER = 1;
     //聊天
     CHAT = 2;
+    //聊天室
+    ROOM = 3;
 }
 
 //响应状态码

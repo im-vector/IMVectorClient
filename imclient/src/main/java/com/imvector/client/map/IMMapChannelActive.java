@@ -2,8 +2,8 @@ package com.imvector.client.map;
 
 import com.imvector.client.proto.IMUtil;
 import com.imvector.map.IIMMapChannelActive;
-import com.imvector.server.proto.Packet;
-import com.imvector.server.proto.system.IMSystem;
+import com.imvector.proto.Packet;
+import com.imvector.proto.system.IMSystem;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.stereotype.Component;
 

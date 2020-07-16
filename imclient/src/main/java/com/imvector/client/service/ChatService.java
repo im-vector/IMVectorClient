@@ -3,8 +3,8 @@ package com.imvector.client.service;
 import com.imvector.client.entity.UserDetail;
 import com.imvector.logic.PacketInboundHandler;
 import com.imvector.proto.impl.IMPacket;
-import com.imvector.server.proto.Packet;
-import com.imvector.server.proto.chat.Chat;
+import com.imvector.proto.Packet;
+import com.imvector.proto.chat.Chat;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class ChatService implements PacketInboundHandler<UserDetail, IMPacket> {
             case Chat.CommandId.CHAT_MSG_VALUE:
                 var resp = Chat.MsgResp.parseFrom(packet.getBody());
                 logger.info("消息发送：status = {},msgId = {}, msg = {}",
-                        resp.getStatus() == Packet.Status.OK, resp.getMsgId(), resp.getMsg());
+                        resp.getStatusValue() == Packet.Status.OK_VALUE, resp.getMsgId(), resp.getMsg());
                 break;
             case Chat.CommandId.CHAT_MSG_OUT_VALUE:
                 var outRep = Chat.MsgOut.parseFrom(packet.getBody());

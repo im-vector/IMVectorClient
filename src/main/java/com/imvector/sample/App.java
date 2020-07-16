@@ -22,11 +22,24 @@ public class App {
                 var idContent = content.split("-", 2);
 
                 int exec = Integer.parseInt(idContent[0]);
-                switch (exec){
+                switch (exec) {
                     case 0:
                         //断开重连
-
                         break;
+                    case 2:
+                        // 创建聊天室
+                        RoomManager.create("");
+                        break;
+                    case 3:
+                        // 加入聊天室
+                        RoomManager.join(idContent[1]);
+                        break;
+                    case 4: {
+                        //发送消息
+                        String[] contents = idContent[1].split("-", 2);
+                        ChatManager.sendRoomTextMessage(Integer.parseInt(contents[0]), contents[1]);
+                        break;
+                    }
                     case 1:
                         //发送消息
                         String[] contents = idContent[1].split("-", 2);

@@ -4,7 +4,7 @@ import com.google.protobuf.Message;
 import com.google.protobuf.MessageOrBuilder;
 import com.google.protobuf.ProtocolMessageEnum;
 import com.imvector.proto.impl.IMPacket;
-import com.imvector.server.proto.Packet;
+import com.imvector.proto.Packet;
 
 /**
  * @author: vector.huang

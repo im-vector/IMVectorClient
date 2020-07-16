@@ -4,8 +4,8 @@ import com.imvector.client.entity.UserDetail;
 import com.imvector.client.proto.IMUtil;
 import com.imvector.map.MapInboundHandler;
 import com.imvector.proto.impl.IMPacket;
-import com.imvector.server.proto.Packet;
-import com.imvector.server.proto.system.IMSystem;
+import com.imvector.proto.Packet;
+import com.imvector.proto.system.IMSystem;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ public class SystemMapService implements MapInboundHandler<UserDetail, IMPacket>
         if (msg.getCommandId() == IMSystem.CommandId.SYSTEM_LOGIN_VALUE) {
 
             var resp = IMSystem.LoginResp.parseFrom(msg.getBody());
-            if (resp.getStatus() == Packet.Status.OK) {
+            if (resp.getStatusValue() == Packet.Status.OK_VALUE) {
                 // 登录成功
                 userDetail.setMaxMsgId(resp.getMaxMsgId());
                 logger.info("登录成功：{}-{}", userDetail.getUserId(), resp.getMsg());
