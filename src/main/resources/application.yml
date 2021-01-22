@@ -2,5 +2,5 @@ imvector:
 
   port: 9088
   node-num: 1
-#  host: 148.70.65.183
-  host: 127.0.0.1
+  host: 148.70.65.183
+#  host: 127.0.0.1

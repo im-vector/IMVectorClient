@@ -21,6 +21,9 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author: vector.huang
  * @date: 2019/03/18 13:13
@@ -37,6 +40,8 @@ public class IMClient implements ApplicationListener<ApplicationEvent> {
     private EventLoopGroup workerGroup;
 
     private IMClientStatus status;
+
+    private List<OnIMClientStatusChangedListener> listeners;
 
     @Autowired
     public IMClient(NettyConfig nettyConfig, InitChannel initChannel) {
@@ -59,6 +64,37 @@ public class IMClient implements ApplicationListener<ApplicationEvent> {
             }
         }
     }
+
+    public void addImClientStatusChangedListener(OnIMClientStatusChangedListener listener) {
+        if (listener == null) {
+            return;
+        }
+        if (listeners == null) {
+            listeners = new ArrayList<>();
+        }
+
+        listeners.add(listener);
+    }
+
+
+    public void removeImClientStatusChangedListener(OnIMClientStatusChangedListener listener) {
+        if (listener == null) {
+            return;
+        }
+        if (listeners == null) {
+            return;
+        }
+        listeners.remove(listener);
+    }
+
+
+    public void clearImClientStatusChangedListener() {
+        if (listeners == null) {
+            return;
+        }
+        listeners.clear();
+    }
+
 
     /**
      * 关闭事件
@@ -138,6 +174,8 @@ public class IMClient implements ApplicationListener<ApplicationEvent> {
         b.option(ChannelOption.SO_KEEPALIVE, true);
         b.option(ChannelOption.TCP_NODELAY, true);
 
+        setStatus(IMClientStatus.CONNECTING);
+
         //绑定端口，开始接收进来的连接
         //sync 等待绑定成功
         ChannelFuture f = b.connect(nettyConfig.getHost(), nettyConfig.getPort());
@@ -173,5 +211,10 @@ public class IMClient implements ApplicationListener<ApplicationEvent> {
 
     public void setStatus(IMClientStatus status) {
         this.status = status;
+        if (listeners != null) {
+            for (OnIMClientStatusChangedListener listener : listeners) {
+                listener.onChanged(status);
+            }
+        }
     }
 }
